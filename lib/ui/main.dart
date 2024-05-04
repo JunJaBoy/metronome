@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:metronome/core/bpm/bpm_meter.dart';
+import 'package:metronome/ui/bpm_meter_bloc.dart';
 import 'package:metronome/ui/metronome/metronome_page.dart';
 
 void main() {
-  runApp(const MetronomeApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => BpmMeterBloc()),
+      ],
+      child: const MetronomeApp(),
+    ),
+  );
 }
 
 class MetronomeApp extends StatefulWidget {
@@ -13,12 +23,11 @@ class MetronomeApp extends StatefulWidget {
 }
 
 class _MetronomeAppState extends State<MetronomeApp> {
-  var isPlaying = false;
+  BpmMeter bpmMeter = BpmMeter();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'Metronome',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -29,12 +38,17 @@ class _MetronomeAppState extends State<MetronomeApp> {
           onPressed: () {
             setState(
               () {
-                isPlaying = !isPlaying;
+                if (bpmMeter.isPlaying) {
+                  bpmMeter.pause();
+                } else {
+                  bpmMeter.resume();
+                }
               },
             );
           },
-          child:
-              Icon(isPlaying ? Icons.stop_rounded : Icons.play_arrow_rounded),
+          child: Icon(
+            bpmMeter.isPlaying ? Icons.stop_rounded : Icons.play_arrow_rounded,
+          ),
         ),
         body: const MetronomePage(),
       ),

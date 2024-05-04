@@ -3,9 +3,13 @@ import 'dart:async';
 import 'package:metronome/core/bpm/bpm_util.dart';
 
 class BpmMeter {
+  static const int defaultBpm = 68;
+  static const int defaultTargetBeat = 4;
+
   final StreamController<int> _beatController = StreamController();
 
   Stream<int> get beatStream => _beatController.stream;
+
   int _beatInternal = 1;
 
   int _targetBeat;
@@ -16,14 +20,18 @@ class BpmMeter {
 
   int get bpm => _bpm;
 
-  late Timer _timer;
+  Timer? _timer;
+
+  var _isPlaying = false;
+
+  bool get isPlaying => _isPlaying;
 
   BpmMeter({
-    int targetBeat = 4,
-    int bpm = 68,
+    int targetBeat = BpmMeter.defaultTargetBeat,
+    int bpm = BpmMeter.defaultBpm,
   })  : _bpm = bpm,
         _targetBeat = targetBeat {
-    if (_targetBeat < 0) {
+    if (_targetBeat <= 0) {
       throw const FormatException("Illegal initial beat");
     }
   }
@@ -33,6 +41,7 @@ class BpmMeter {
       Duration(milliseconds: BpmUtil.bpmToMillis(_bpm)),
       (timer) => _tick(),
     );
+    _isPlaying = true;
   }
 
   void _tick() {
@@ -49,7 +58,8 @@ class BpmMeter {
   }
 
   void pause() {
-    _timer.cancel();
+    _timer?.cancel();
+    _isPlaying = false;
   }
 
   bool updateProperty({
