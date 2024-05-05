@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class MetronomePage extends StatefulWidget {
-  final int totalBeat;
+  final int targetBeat;
   final Stream<int> beatStream;
 
   const MetronomePage({
     super.key,
-    required this.totalBeat,
+    required this.targetBeat,
     required this.beatStream,
   });
 
@@ -27,7 +27,7 @@ class _MetronomePageState extends State<MetronomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _BpmCounter(
-              totalBeat: widget.totalBeat,
+              targetBeat: widget.targetBeat,
               beatStream: widget.beatStream,
               bpm: 68,
             ),
@@ -39,13 +39,13 @@ class _MetronomePageState extends State<MetronomePage> {
 }
 
 class _BpmCounter extends StatelessWidget {
-  final int totalBeat;
+  final int targetBeat;
   final Stream<int> beatStream;
   final int bpm;
 
   const _BpmCounter({
     super.key,
-    required this.totalBeat,
+    required this.targetBeat,
     required this.beatStream,
     required this.bpm,
   });
@@ -61,7 +61,7 @@ class _BpmCounter extends StatelessWidget {
             child: ListView.separated(
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
-              itemCount: totalBeat,
+              itemCount: targetBeat,
               itemBuilder: (BuildContext context, int index) {
                 final bool selected = snapshot.data == index + 1;
                 return Expanded(
