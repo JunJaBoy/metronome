@@ -22,45 +22,42 @@ class _MetronomeAppState extends State<MetronomeApp> {
       ],
       child: BlocBuilder<MetronomeBloc, Metronome>(
         bloc: metronomeBloc,
-        builder: (context, metronome) {
-          print("METRONOME WORKING ${metronome.isPlaying}");
-          return MaterialApp(
-            title: 'Metronome',
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-              useMaterial3: true,
-            ),
-            home: Scaffold(
-              floatingActionButton: FloatingActionButton.large(
-                onPressed: () {
-                  setState(
-                    () {
-                      metronomeBloc.add(
-                        metronome.isPlaying
-                            ? PauseMetronome()
-                            : ResumeMetronome(),
-                      );
-                    },
-                  );
-                },
-                child: Icon(
-                  metronome.isPlaying
-                      ? Icons.stop_rounded
-                      : Icons.play_arrow_rounded,
-                ),
-              ),
-              body: StreamBuilder(
-                stream: metronome.beatStream,
-                builder: (context, beat) {
-                  return MetronomePage(
-                    targetBeat: metronome.properties.targetBeat,
-                    currentBeat: beat.data,
-                  );
-                },
+        builder: (context, metronome) => MaterialApp(
+          title: 'Metronome',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+            useMaterial3: true,
+          ),
+          home: Scaffold(
+            floatingActionButton: FloatingActionButton.large(
+              onPressed: () {
+                setState(
+                  () {
+                    metronomeBloc.add(
+                      metronome.isPlaying
+                          ? PauseMetronome()
+                          : ResumeMetronome(),
+                    );
+                  },
+                );
+              },
+              child: Icon(
+                metronome.isPlaying
+                    ? Icons.stop_rounded
+                    : Icons.play_arrow_rounded,
               ),
             ),
-          );
-        },
+            body: StreamBuilder(
+              stream: metronome.beatStream,
+              builder: (context, beat) {
+                return MetronomePage(
+                  targetBeat: metronome.properties.targetBeat,
+                  currentBeat: beat.data,
+                );
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
