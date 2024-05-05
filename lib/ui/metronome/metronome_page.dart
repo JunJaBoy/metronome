@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 
 class MetronomePage extends StatefulWidget {
-  const MetronomePage({super.key});
+  final int totalBeat;
+  final Stream<int> beatStream;
+
+  const MetronomePage({
+    super.key,
+    required this.totalBeat,
+    required this.beatStream,
+  });
 
   @override
   State<MetronomePage> createState() => _MetronomePageState();
 }
 
 class _MetronomePageState extends State<MetronomePage> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +33,8 @@ class _MetronomePageState extends State<MetronomePage> {
             ),
             Container(
               child: _BpmCounter(
-                beat: 4,
+                totalBeat: widget.totalBeat,
+                beatStream: widget.beatStream,
                 bpm: 68,
               ),
             ),
@@ -47,36 +45,39 @@ class _MetronomePageState extends State<MetronomePage> {
   }
 }
 
-class _BpmCounter extends StatefulWidget {
-  final int beat;
+class _BpmCounter extends StatelessWidget {
+  final int totalBeat;
+  final Stream<int> beatStream;
   final int bpm;
 
   const _BpmCounter({
     super.key,
-    required this.beat,
+    required this.totalBeat,
+    required this.beatStream,
     required this.bpm,
   });
 
   @override
-  State<_BpmCounter> createState() => _BpmCounterState();
-}
-
-class _BpmCounterState extends State<_BpmCounter> {
-  @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: ListView.separated(
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        itemCount: widget.beat,
-        itemBuilder: (BuildContext context, int index) {
-          return Text(
-            "${index + 1}",
-            style: TextStyle(fontSize: 128),
+      child: StreamBuilder(
+        stream: beatStream,
+        builder: (context, snapshot) {
+          return ListView.separated(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: totalBeat,
+            itemBuilder: (BuildContext context, int index) {
+              final bool selected = snapshot.data == index + 1;
+              return Text(
+                "${index + 1}",
+                style: TextStyle(fontSize: selected ? 128 : 64),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return const SizedBox(width: 20);
+            },
           );
-        },
-        separatorBuilder: (BuildContext context, int index) {
-          return const SizedBox(width: 20);
         },
       ),
     );

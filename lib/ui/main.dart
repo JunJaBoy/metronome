@@ -50,7 +50,10 @@ class _MetronomeAppState extends State<MetronomeApp> {
             bpmMeter.isPlaying ? Icons.stop_rounded : Icons.play_arrow_rounded,
           ),
         ),
-        body: const MetronomePage(),
+        body: MetronomePage(
+          totalBeat: bpmMeter.targetBeat,
+          beatStream: bpmMeter.beatStream,
+        ),
       ),
     );
   }
