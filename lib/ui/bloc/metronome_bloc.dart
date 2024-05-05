@@ -4,7 +4,9 @@ import 'package:metronome/core/metronome/ui/bloc_event_handler.dart';
 
 class MetronomeBloc extends Bloc<MetronomeEvent, Metronome>
     implements BlockEventHandler {
-  MetronomeBloc() : super(Metronome.withDefaultProperties());
+  MetronomeBloc() : super(Metronome.withDefaultProperties()) {
+    registerEventHandler();
+  }
 
   @override
   void registerEventHandler() => on<MetronomeEvent>(
@@ -12,12 +14,13 @@ class MetronomeBloc extends Bloc<MetronomeEvent, Metronome>
           switch (event) {
             case ResumeMetronome():
               state.resume();
+              emit(state);
               break;
             case PauseMetronome():
               state.pause();
+              emit(state);
               break;
             case ChangeMetronomeProperties():
-              // TODO: Handle this case.
           }
         },
       );

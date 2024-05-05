@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class MetronomePage extends StatefulWidget {
   final int targetBeat;
-  final Stream<int> beatStream;
+  final int? currentBeat;
 
   const MetronomePage({
     super.key,
     required this.targetBeat,
-    required this.beatStream,
+    required this.currentBeat,
   });
 
   @override
@@ -22,16 +22,11 @@ class _MetronomePageState extends State<MetronomePage> {
         title: const Text("Metronome"),
       ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _BpmCounter(
-              targetBeat: widget.targetBeat,
-              beatStream: widget.beatStream,
-              bpm: 68,
-            ),
-          ],
+        child: _BpmCounter(
+          targetBeat: widget.targetBeat,
+          currentBeat: widget.currentBeat,
+          // TODO
+          bpm: 68,
         ),
       ),
     );
@@ -40,44 +35,32 @@ class _MetronomePageState extends State<MetronomePage> {
 
 class _BpmCounter extends StatelessWidget {
   final int targetBeat;
-  final Stream<int> beatStream;
+  final int? currentBeat;
   final int bpm;
 
   const _BpmCounter({
     super.key,
     required this.targetBeat,
-    required this.beatStream,
+    required this.currentBeat,
     required this.bpm,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: StreamBuilder(
-        stream: beatStream,
-        builder: (context, snapshot) {
-          return Container(
-            alignment: Alignment.center,
-            child: ListView.separated(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: targetBeat,
-              itemBuilder: (BuildContext context, int index) {
-                final bool selected = snapshot.data == index + 1;
-                return Expanded(
-                  child: Text(
-                    "${index + 1}",
-                    style: TextStyle(fontSize: selected ? 128 : 64),
-                  ),
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(width: 20);
-              },
-            ),
-          );
-        },
-      ),
+    return ListView.separated(
+      shrinkWrap: true,
+      scrollDirection: Axis.horizontal,
+      itemCount: targetBeat,
+      itemBuilder: (BuildContext context, int index) {
+        final bool selected = currentBeat == index + 1;
+        return Text(
+          "${index + 1}",
+          style: TextStyle(fontSize: selected ? 128 : 64),
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return const SizedBox(width: 20);
+      },
     );
   }
 }

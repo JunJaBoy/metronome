@@ -12,6 +12,8 @@ class MetronomeApp extends StatefulWidget {
 }
 
 class _MetronomeAppState extends State<MetronomeApp> {
+  final metronomeBloc = MetronomeBloc();
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -19,6 +21,7 @@ class _MetronomeAppState extends State<MetronomeApp> {
         BlocProvider(create: (context) => MetronomeBloc()),
       ],
       child: BlocBuilder<MetronomeBloc, Metronome>(
+        bloc: metronomeBloc,
         builder: (context, metronome) => MaterialApp(
           title: 'Metronome',
           theme: ThemeData(
@@ -28,14 +31,8 @@ class _MetronomeAppState extends State<MetronomeApp> {
           home: Scaffold(
             floatingActionButton: FloatingActionButton.large(
               onPressed: () {
-                setState(
-                  () {
-                    if (metronome.isPlaying) {
-                      metronome.pause();
-                    } else {
-                      metronome.resume();
-                    }
-                  },
+                metronomeBloc.add(
+                  metronome.isPlaying ? PauseMetronome() : ResumeMetronome(),
                 );
               },
               child: Icon(
@@ -44,10 +41,14 @@ class _MetronomeAppState extends State<MetronomeApp> {
                     : Icons.play_arrow_rounded,
               ),
             ),
-            body: MetronomePage(
-              targetBeat: metronome.properties.targetBeat,
-              // TODO Remove stream, use current beat instaed
-              beatStream: metronome.beatStream,
+            body: StreamBuilder(
+              stream: metronome.beatStream,
+              builder: (context, beat) {
+                return MetronomePage(
+                  targetBeat: metronome.properties.targetBeat,
+                  currentBeat: beat.data,
+                );
+              },
             ),
           ),
         ),
