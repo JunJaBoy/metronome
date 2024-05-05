@@ -14,11 +14,9 @@ class MetronomeBloc extends Bloc<MetronomeEvent, Metronome>
           switch (event) {
             case ResumeMetronome():
               state.resume();
-              emit(state);
               break;
             case PauseMetronome():
               state.pause();
-              emit(state);
               break;
             case ChangeMetronomeProperties():
           }

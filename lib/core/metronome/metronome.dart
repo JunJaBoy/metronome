@@ -11,10 +11,10 @@ class Metronome {
   static const int defaultTargetBeat = 4;
 
   /// Stream controller for BPM
-  final StreamController<int> _beatController = StreamController();
+  final StreamController<int?> _beatController = StreamController();
 
   /// Stream from [_beatController]
-  Stream<int> get beatStream => _beatController.stream;
+  Stream<int?> get beatStream => _beatController.stream;
 
   /// Internal beat count for [beatStream]
   int _beatInternal = 1;
@@ -43,6 +43,8 @@ class Metronome {
         );
 
   void resume() {
+    // invokes before the timer tick begins
+    _tick();
     _timer = Timer.periodic(
       Duration(milliseconds: BpmUtil.bpmToMillis(properties.bpm)),
       (timer) => _tick(),
@@ -65,6 +67,8 @@ class Metronome {
 
   void pause() {
     _timer?.cancel();
+    _beatController.add(null);
+    _beatInternal = 1;
     _isPlaying = false;
   }
 
