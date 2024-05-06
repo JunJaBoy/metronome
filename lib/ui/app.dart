@@ -51,8 +51,9 @@ class _MetronomeAppState extends State<MetronomeApp> {
               stream: metronome.beatStream,
               builder: (context, beat) {
                 return MetronomePage(
-                  targetBeat: metronome.properties.targetBeat,
-                  currentBeat: beat.data,
+                  beatCount: beat.data,
+                  selectedBpm: metronome.properties.bpm,
+                  selectedBeat: metronome.properties.beat,
                 );
               },
             ),

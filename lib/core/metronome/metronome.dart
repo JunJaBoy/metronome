@@ -8,7 +8,19 @@ class Metronome {
   static const int defaultBpm = 68;
 
   /// Default target beat
-  static const int defaultTargetBeat = 4;
+  static const int defaultBeat = 4;
+
+  /// Maximum BPM
+  static const int maximumBpm = 218;
+
+  /// Minimum BPM
+  static const int minimumBpm = 40;
+
+  /// Maximum beat
+  static const int maximumBeat = 16;
+
+  /// Minimum beat
+  static const int minimumBeat = 1;
 
   /// Stream controller for BPM
   final StreamController<int?> _beatController = StreamController();
@@ -33,11 +45,11 @@ class Metronome {
   });
 
   Metronome.withDefaultProperties({
-    int targetBeat = Metronome.defaultTargetBeat,
+    int targetBeat = Metronome.defaultBeat,
     int bpm = Metronome.defaultBpm,
   }) : this(
           properties: MetronomeProperties(
-            targetBeat: targetBeat,
+            beat: targetBeat,
             bpm: bpm,
           ),
         );
@@ -57,7 +69,7 @@ class Metronome {
   }
 
   int _calculateBeat() {
-    if (_beatInternal == properties.targetBeat) {
+    if (_beatInternal == properties.beat) {
       int temp = _beatInternal;
       _beatInternal = 1;
       return temp;
@@ -74,9 +86,11 @@ class Metronome {
 
   bool updateBpm(int bpm) {
     try {
-      properties = MetronomeProperties(
-        bpm: bpm,
-        targetBeat: properties.targetBeat,
+      updateProperties(
+        MetronomeProperties(
+          bpm: bpm,
+          beat: properties.beat,
+        ),
       );
     } on Exception {
       return false;
@@ -86,9 +100,11 @@ class Metronome {
 
   bool updateTargetBeat(int targetBeat) {
     try {
-      properties = MetronomeProperties(
-        bpm: properties.bpm,
-        targetBeat: targetBeat,
+      updateProperties(
+        MetronomeProperties(
+          bpm: properties.bpm,
+          beat: targetBeat,
+        ),
       );
     } on Exception {
       return false;
@@ -107,17 +123,18 @@ class Metronome {
 }
 
 class MetronomeProperties {
-  final int targetBeat;
+  final int beat;
   final int bpm;
 
   MetronomeProperties({
-    this.targetBeat = Metronome.defaultTargetBeat,
+    this.beat = Metronome.defaultBeat,
     this.bpm = Metronome.defaultBpm,
   }) {
-    if (targetBeat < 1) {
+    if (beat < Metronome.minimumBeat &&
+        beat > Metronome.maximumBeat) {
       throw const FormatException("Target beat must be up to 1.");
     }
-    if (bpm < 1) {
+    if (bpm < Metronome.minimumBpm && bpm > Metronome.maximumBpm) {
       throw const FormatException("BPM must be up to 1.");
     }
   }
