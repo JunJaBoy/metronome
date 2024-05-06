@@ -47,14 +47,14 @@ class _MetronomePageState extends State<MetronomePage> {
                 beatCount: widget.beatCount,
               ),
             ),
-            Slider(
-              value: widget.selectedBpm / widget.maximumBpm,
-              min: widget.minimumBpm / widget.maximumBpm,
-              onChanged: (value) {
-                widget.onChangeSelectedBpm((value * widget.maximumBpm).toInt());
-                print("WIDGETWIDGET ${(value * widget.maximumBpm).toInt()}");
-              },
-            )
+            _BpmSlider(
+              selectedBpm: widget.selectedBpm,
+              minimumBpm: widget.minimumBpm,
+              maximumBpm: widget.maximumBpm,
+              onChanged: (value) => widget
+                  .onChangeSelectedBpm((value * widget.maximumBpm).toInt()),
+            ),
+            Expanded(child: Container())
           ],
         ),
       ),
@@ -92,6 +92,35 @@ class _BpmCounter extends StatelessWidget {
       separatorBuilder: (BuildContext context, int index) {
         return const SizedBox(width: 20);
       },
+    );
+  }
+}
+
+class _BpmSlider extends StatelessWidget {
+  final int selectedBpm;
+  final int minimumBpm;
+  final int maximumBpm;
+  final void Function(double) onChanged;
+
+  const _BpmSlider({
+    super.key,
+    required this.selectedBpm,
+    required this.minimumBpm,
+    required this.maximumBpm,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text("$selectedBpm BPM"),
+        Slider(
+          value: selectedBpm / maximumBpm,
+          min: minimumBpm / maximumBpm,
+          onChanged: (value) => onChanged(value),
+        ),
+      ],
     );
   }
 }
