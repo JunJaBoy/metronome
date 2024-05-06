@@ -7,10 +7,12 @@ class MetronomePage extends StatefulWidget {
   final int maximumBpm;
   final int minimumBpm;
   final int selectedBpm;
+  final void Function(int) onChangeSelectedBpm;
 
   final int maximumBeat;
   final int minimumBeat;
   final int selectedBeat;
+  final void Function(int) onChangeSelectedBeat;
 
   const MetronomePage({
     super.key,
@@ -18,9 +20,11 @@ class MetronomePage extends StatefulWidget {
     this.maximumBpm = Metronome.maximumBpm,
     this.minimumBpm = Metronome.minimumBpm,
     required this.selectedBpm,
+    required this.onChangeSelectedBpm,
     this.maximumBeat = Metronome.maximumBeat,
     this.minimumBeat = Metronome.minimumBeat,
     required this.selectedBeat,
+    required this.onChangeSelectedBeat,
   });
 
   @override
@@ -44,9 +48,11 @@ class _MetronomePageState extends State<MetronomePage> {
               ),
             ),
             Slider(
-              value: 0.5,
+              value: widget.selectedBpm / widget.maximumBpm,
+              min: widget.minimumBpm / widget.maximumBpm,
               onChanged: (value) {
-                print("SLIDER VALUE $value");
+                widget.onChangeSelectedBpm((value * widget.maximumBpm).toInt());
+                print("WIDGETWIDGET ${(value * widget.maximumBpm).toInt()}");
               },
             )
           ],

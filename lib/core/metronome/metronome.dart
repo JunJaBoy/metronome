@@ -55,11 +55,17 @@ class Metronome {
         );
 
   void resume() {
-    // invokes before the timer tick begins
-    _tick();
+    // cancels previous timer (if exists) before new timer tick begins
+    _timer?.cancel();
+    // TODO: add tick before timer registration
     _timer = Timer.periodic(
       Duration(milliseconds: BpmUtil.bpmToMillis(properties.bpm)),
-      (timer) => _tick(),
+      (timer) {
+        _tick();
+        if (_beatInternal == 2) {
+          resume();
+        }
+      },
     );
     _isPlaying = true;
   }
@@ -98,12 +104,12 @@ class Metronome {
     return true;
   }
 
-  bool updateTargetBeat(int targetBeat) {
+  bool updateBeat(int beat) {
     try {
       updateProperties(
         MetronomeProperties(
           bpm: properties.bpm,
-          beat: targetBeat,
+          beat: beat,
         ),
       );
     } on Exception {
@@ -114,7 +120,9 @@ class Metronome {
 
   bool updateProperties(MetronomeProperties properties) {
     try {
-      properties = properties;
+      // pause();
+      this.properties = properties;
+      // resume();
     } on Exception {
       return false;
     }
@@ -130,12 +138,24 @@ class MetronomeProperties {
     this.beat = Metronome.defaultBeat,
     this.bpm = Metronome.defaultBpm,
   }) {
-    if (beat < Metronome.minimumBeat &&
-        beat > Metronome.maximumBeat) {
-      throw const FormatException("Target beat must be up to 1.");
-    }
     if (bpm < Metronome.minimumBpm && bpm > Metronome.maximumBpm) {
-      throw const FormatException("BPM must be up to 1.");
+      throw const FormatException(
+          "BPM must be in range ${Metronome.minimumBpm}..${Metronome.maximumBpm}");
+    }
+    if (beat < Metronome.minimumBeat && beat > Metronome.maximumBeat) {
+      throw const FormatException(
+          "Beat must be in range ${Metronome.minimumBeat}..${Metronome.maximumBeat}.");
     }
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MetronomeProperties &&
+          runtimeType == other.runtimeType &&
+          beat == other.beat &&
+          bpm == other.bpm;
+
+  @override
+  int get hashCode => beat.hashCode ^ bpm.hashCode;
 }

@@ -54,6 +54,20 @@ class _MetronomeAppState extends State<MetronomeApp> {
                   beatCount: beat.data,
                   selectedBpm: metronome.properties.bpm,
                   selectedBeat: metronome.properties.beat,
+                  onChangeSelectedBpm: (value) {
+                    setState(
+                      () {
+                        metronomeBloc.add(ChangeMetronomeBpm(value));
+                      },
+                    );
+                  },
+                  onChangeSelectedBeat: (value) {
+                    setState(
+                      () {
+                        metronomeBloc.add(ChangeMetronomeBeat(value));
+                      },
+                    );
+                  },
                 );
               },
             ),
