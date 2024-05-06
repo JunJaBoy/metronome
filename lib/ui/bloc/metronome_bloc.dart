@@ -9,28 +9,32 @@ class MetronomeBloc extends Bloc<MetronomeEvent, Metronome>
   }
 
   @override
-  void registerEventHandler() => on<MetronomeEvent>(
-        (event, emit) {
-          switch (event) {
-            case ResumeMetronome():
-              state.resume();
-              emit(state);
-              break;
-            case PauseMetronome():
-              state.pause();
-              emit(state);
-              break;
-            case ChangeMetronomeBpm():
-              state.updateBpm(event.value);
-              emit(state);
-              break;
-            case ChangeMetronomeBeat():
-              state.updateBeat(event.value);
-              emit(state);
-              break;
-          }
-        },
-      );
+  void registerEventHandler() {
+    on<ResumeMetronome>(
+      (event, emit) {
+        state.resume();
+        emit(state);
+      },
+    );
+    on<PauseMetronome>(
+      (event, emit) {
+        state.pause();
+        emit(state);
+      },
+    );
+    on<ChangeMetronomeBpm>(
+      (event, emit) {
+        state.updateBpm(event.value);
+        emit(state);
+      },
+    );
+    on<ChangeMetronomeBeat>(
+      (event, emit) {
+        state.updateBpm(event.value);
+        emit(state);
+      },
+    );
+  }
 }
 
 sealed class MetronomeEvent {}
