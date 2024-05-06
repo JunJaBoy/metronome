@@ -47,12 +47,11 @@ class _MetronomePageState extends State<MetronomePage> {
                 beatCount: widget.beatCount,
               ),
             ),
-            _BpmSlider(
-              selectedBpm: widget.selectedBpm,
+            _BpmConfiguration(
+              bpm: widget.selectedBpm,
               minimumBpm: widget.minimumBpm,
               maximumBpm: widget.maximumBpm,
-              onChanged: (value) => widget
-                  .onChangeSelectedBpm((value * widget.maximumBpm).toInt()),
+              onBpmChanged: (value) => widget.onChangeSelectedBpm(value),
             ),
             Expanded(child: Container())
           ],
@@ -67,7 +66,6 @@ class _BpmCounter extends StatelessWidget {
   final int? beatCount;
 
   const _BpmCounter({
-    super.key,
     required this.targetBeat,
     required this.beatCount,
   });
@@ -81,8 +79,8 @@ class _BpmCounter extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         final bool selected = beatCount == index + 1;
         return SizedBox(
-          width: 60,
-          height: 120,
+          width: 64,
+          height: 128,
           child: Text(
             "${index + 1}",
             style: TextStyle(fontSize: selected ? 128 : 64),
@@ -90,35 +88,63 @@ class _BpmCounter extends StatelessWidget {
         );
       },
       separatorBuilder: (BuildContext context, int index) {
-        return const SizedBox(width: 20);
+        return const SizedBox(width: 32);
       },
     );
   }
 }
 
-class _BpmSlider extends StatelessWidget {
-  final int selectedBpm;
+class _BpmConfiguration extends StatelessWidget {
+  final int bpm;
   final int minimumBpm;
   final int maximumBpm;
-  final void Function(double) onChanged;
+  final void Function(int) onBpmChanged;
 
-  const _BpmSlider({
-    super.key,
-    required this.selectedBpm,
+  const _BpmConfiguration({
+    required this.bpm,
     required this.minimumBpm,
     required this.maximumBpm,
-    required this.onChanged,
+    required this.onBpmChanged,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text("$selectedBpm BPM"),
-        Slider(
-          value: selectedBpm / maximumBpm,
-          min: minimumBpm / maximumBpm,
-          onChanged: (value) => onChanged(value),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "$bpm BPM",
+                style: const TextStyle(
+                  fontSize: 32,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  onBpmChanged(bpm - 1);
+                },
+                icon: const Icon(Icons.arrow_downward_rounded),
+              ),
+              IconButton(
+                onPressed: () {
+                  onBpmChanged(bpm + 1);
+                },
+                icon: const Icon(Icons.arrow_upward_rounded),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Slider(
+            value: bpm / maximumBpm,
+            min: minimumBpm / maximumBpm,
+            onChanged: (value) => onBpmChanged((value * maximumBpm).toInt()),
+          ),
         ),
       ],
     );
