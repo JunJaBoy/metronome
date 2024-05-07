@@ -88,7 +88,7 @@ class _BpmCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool shouldShowConciseLayout = beat <= 4;
+    final bool shouldShowConciseLayout = beat > 4;
 
     return IntrinsicHeight(
       child: Card(
@@ -106,13 +106,14 @@ class _BpmCounter extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: shouldShowConciseLayout
-                      ? MainAxisAlignment.spaceBetween
-                      : MainAxisAlignment.center,
+                      ? MainAxisAlignment.center
+                      : MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
                         Text(
                           "$bpm",
+                          textAlign: TextAlign.end,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 40,
@@ -122,6 +123,7 @@ class _BpmCounter extends StatelessWidget {
                         ),
                         const Text(
                           " BPM",
+                          textAlign: TextAlign.end,
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.black,
@@ -130,9 +132,10 @@ class _BpmCounter extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if (shouldShowConciseLayout)
+                    if (!shouldShowConciseLayout)
                       Text(
                         "${beatCount ?? 0}/$beat",
+                        textAlign: TextAlign.end,
                         style: const TextStyle(
                           fontSize: 20,
                           color: Colors.black,
@@ -143,7 +146,42 @@ class _BpmCounter extends StatelessWidget {
                 ),
                 const Spacer(),
                 shouldShowConciseLayout
-                    ? ListView.separated(
+                    ? Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            "${beatCount ?? 0}",
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(
+                              fontSize: 120,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textScaler: TextScaler.noScaling,
+                          ),
+                          const Text(
+                            "/",
+                            textAlign: TextAlign.end,
+                            style: TextStyle(
+                              fontSize: 60,
+                              color: Colors.grey,
+                            ),
+                            textScaler: TextScaler.noScaling,
+                          ),
+                          Text(
+                            "$beat",
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(
+                              fontSize: 60,
+                              color: Colors.grey,
+                            ),
+                            textScaler: TextScaler.noScaling,
+                          ),
+                        ],
+                      )
+                    : ListView.separated(
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
                         itemCount: beat,
@@ -175,38 +213,6 @@ class _BpmCounter extends StatelessWidget {
                         separatorBuilder: (BuildContext context, int index) {
                           return const SizedBox(width: 8);
                         },
-                      )
-                    : Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            "${beatCount ?? 0}",
-                            style: const TextStyle(
-                              fontSize: 120,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textScaler: TextScaler.noScaling,
-                          ),
-                          const Text(
-                            "/",
-                            style: TextStyle(
-                              fontSize: 60,
-                              color: Colors.grey,
-                            ),
-                            textScaler: TextScaler.noScaling,
-                          ),
-                          Text(
-                            "$beat",
-                            style: const TextStyle(
-                              fontSize: 60,
-                              color: Colors.grey,
-                            ),
-                            textScaler: TextScaler.noScaling,
-                          ),
-                        ],
                       ),
               ],
             ),
@@ -263,15 +269,19 @@ class _BeatConfiguration extends StatelessWidget {
                   const Spacer(),
                   IconButton(
                     onPressed: () {
-                      onBeatChanged(beat - 1);
+                      if (beat > minimumBeat) {
+                        onBeatChanged(beat - 1);
+                      }
                     },
-                    icon: const Icon(Icons.arrow_downward_rounded),
+                    icon: const Icon(Icons.remove_rounded),
                   ),
                   IconButton(
                     onPressed: () {
-                      onBeatChanged(beat + 1);
+                      if (beat < maximumBeat) {
+                        onBeatChanged(beat + 1);
+                      }
                     },
-                    icon: const Icon(Icons.arrow_upward_rounded),
+                    icon: const Icon(Icons.add_rounded),
                   ),
                 ],
               ),
@@ -338,15 +348,19 @@ class _BpmConfiguration extends StatelessWidget {
                   const Spacer(),
                   IconButton(
                     onPressed: () {
-                      onBpmChanged(bpm - 1);
+                      if (bpm > minimumBpm) {
+                        onBpmChanged(bpm - 1);
+                      }
                     },
-                    icon: const Icon(Icons.arrow_downward_rounded),
+                    icon: const Icon(Icons.remove_rounded),
                   ),
                   IconButton(
                     onPressed: () {
-                      onBpmChanged(bpm + 1);
+                      if (bpm < maximumBpm) {
+                        onBpmChanged(bpm + 1);
+                      }
                     },
-                    icon: const Icon(Icons.arrow_upward_rounded),
+                    icon: const Icon(Icons.add_rounded),
                   ),
                 ],
               ),
