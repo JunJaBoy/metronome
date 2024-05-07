@@ -41,7 +41,7 @@ class _MetronomePageState extends State<MetronomePage> {
       body: SafeArea(
         child: Column(
           children: [
-            Flexible(
+            IntrinsicHeight(
               child: _BpmCounter(
                 targetBeat: widget.selectedBeat,
                 beatCount: widget.beatCount,
@@ -81,41 +81,57 @@ class _BpmCounter extends StatelessWidget {
     return Card(
       elevation: null,
       child: targetBeat <= 4
-          ? ListView.separated(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: targetBeat,
-              itemBuilder: (BuildContext context, int index) {
-                final bool selected = beatCount == index + 1;
-                return SizedBox(
-                  width: 64,
-                  height: 128,
-                  child: Text(
-                    "${index + 1}",
-                    style: TextStyle(fontSize: selected ? 128 : 64),
+          ? SizedBox(
+              height: 160,
+              child: Row(
+                children: [
+                  const Spacer(),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: targetBeat,
+                    itemBuilder: (BuildContext context, int index) {
+                      final bool selected = beatCount == index + 1;
+                      return Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Text(
+                          "${index + 1}",
+                          style: TextStyle(fontSize: selected ? 128 : 64),
+                          textScaler: TextScaler.noScaling,
+                        ),
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const SizedBox(width: 32);
+                    },
                   ),
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(width: 32);
-              },
+                ],
+              ),
             )
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  "${beatCount ?? 0}",
-                  style: const TextStyle(fontSize: 128),
-                ),
-                const Text(
-                  "/",
-                  style: TextStyle(fontSize: 64),
-                ),
-                Text(
-                  "$targetBeat",
-                  style: const TextStyle(fontSize: 64),
-                ),
-              ],
+          : SizedBox(
+              height: 160,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    "${beatCount ?? 0}",
+                    style: const TextStyle(fontSize: 128),
+                    textScaler: TextScaler.noScaling,
+                  ),
+                  const Text(
+                    "/",
+                    style: TextStyle(fontSize: 64),
+                    textScaler: TextScaler.noScaling,
+                  ),
+                  Text(
+                    "$targetBeat",
+                    style: const TextStyle(fontSize: 64),
+                    textScaler: TextScaler.noScaling,
+                  ),
+                ],
+              ),
             ),
     );
   }
