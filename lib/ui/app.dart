@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:metronome/core/metronome/metronome.dart';
@@ -13,6 +14,8 @@ class MetronomeApp extends StatefulWidget {
 
 class _MetronomeAppState extends State<MetronomeApp> {
   final metronomeBloc = MetronomeBloc();
+
+  var _recent = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +53,19 @@ class _MetronomeAppState extends State<MetronomeApp> {
             body: StreamBuilder(
               stream: metronome.beatStream,
               builder: (context, beat) {
+                if (beat.data != null) {
+                  AudioPlayer().play(
+                    AssetSource(
+                      beat.data == Metronome.minimumBeat
+                          ? 'audio_metronome_bell.mp3'
+                          : 'audio_metronome_click.mp3',
+                    ),
+                    mode: PlayerMode.lowLatency,
+                  );
+                }
+                if (beat.data != _recent && beat.data != null) {
+                  _recent = beat.data!;
+                }
                 return MetronomePage(
                   beatCount: beat.data,
                   selectedBpm: metronome.properties.bpm,
