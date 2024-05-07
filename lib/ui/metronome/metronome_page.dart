@@ -95,7 +95,7 @@ class _BpmCounter extends StatelessWidget {
         elevation: 0.0,
         color: Theme.of(context).colorScheme.primaryContainer,
         child: SizedBox(
-          height: 120,
+          height: 160,
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 16.0,
@@ -105,14 +105,17 @@ class _BpmCounter extends StatelessWidget {
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: shouldShowConciseLayout ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+                  mainAxisAlignment: shouldShowConciseLayout
+                      ? MainAxisAlignment.spaceBetween
+                      : MainAxisAlignment.center,
                   children: [
                     Row(
                       children: [
                         Text(
                           "$bpm",
                           style: const TextStyle(
-                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 40,
                             color: Colors.black,
                           ),
                           textScaler: TextScaler.noScaling,
@@ -120,8 +123,10 @@ class _BpmCounter extends StatelessWidget {
                         const Text(
                           " BPM",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 16,
+                            color: Colors.black,
                           ),
+                          textScaler: TextScaler.noScaling,
                         ),
                       ],
                     ),
@@ -147,16 +152,19 @@ class _BpmCounter extends StatelessWidget {
                           return Align(
                             alignment: Alignment.bottomCenter,
                             child: SizedBox(
-                              width: 48,
-                              height: 100,
+                              width: 64,
+                              height: 132,
                               child: Align(
                                 alignment: Alignment.bottomRight,
                                 child: Text(
                                   "${index + 1}",
                                   style: TextStyle(
-                                    fontSize: selected ? 80 : 40,
+                                    fontSize: selected ? 120 : 60,
                                     color:
                                         selected ? Colors.black : Colors.grey,
+                                    fontWeight: selected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
                                   ),
                                   textScaler: TextScaler.noScaling,
                                 ),
@@ -165,7 +173,7 @@ class _BpmCounter extends StatelessWidget {
                           );
                         },
                         separatorBuilder: (BuildContext context, int index) {
-                          return const SizedBox(width: 20);
+                          return const SizedBox(width: 8);
                         },
                       )
                     : Row(
@@ -176,15 +184,16 @@ class _BpmCounter extends StatelessWidget {
                           Text(
                             "${beatCount ?? 0}",
                             style: const TextStyle(
-                              fontSize: 80,
+                              fontSize: 120,
                               color: Colors.black,
+                              fontWeight: FontWeight.bold,
                             ),
                             textScaler: TextScaler.noScaling,
                           ),
                           const Text(
                             "/",
                             style: TextStyle(
-                              fontSize: 40,
+                              fontSize: 60,
                               color: Colors.grey,
                             ),
                             textScaler: TextScaler.noScaling,
@@ -192,7 +201,7 @@ class _BpmCounter extends StatelessWidget {
                           Text(
                             "$beat",
                             style: const TextStyle(
-                              fontSize: 40,
+                              fontSize: 60,
                               color: Colors.grey,
                             ),
                             textScaler: TextScaler.noScaling,
