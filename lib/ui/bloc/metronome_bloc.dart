@@ -30,7 +30,7 @@ class MetronomeBloc extends Bloc<MetronomeEvent, Metronome>
     );
     on<ChangeMetronomeBeat>(
       (event, emit) {
-        state.updateBpm(event.value);
+        state.updateBeat(event.value);
         emit(state);
       },
     );

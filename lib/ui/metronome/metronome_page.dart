@@ -47,13 +47,19 @@ class _MetronomePageState extends State<MetronomePage> {
                 beatCount: widget.beatCount,
               ),
             ),
+            _BeatConfiguration(
+              beat: widget.selectedBeat,
+              maximumBeat: widget.maximumBeat,
+              minimumBeat: widget.minimumBeat,
+              onBeatChanged: (value) => widget.onChangeSelectedBeat(value),
+            ),
             _BpmConfiguration(
               bpm: widget.selectedBpm,
               minimumBpm: widget.minimumBpm,
               maximumBpm: widget.maximumBpm,
               onBpmChanged: (value) => widget.onChangeSelectedBpm(value),
             ),
-            Expanded(child: Container())
+            Expanded(child: Container()),
           ],
         ),
       ),
@@ -72,24 +78,27 @@ class _BpmCounter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      shrinkWrap: true,
-      scrollDirection: Axis.horizontal,
-      itemCount: targetBeat,
-      itemBuilder: (BuildContext context, int index) {
-        final bool selected = beatCount == index + 1;
-        return SizedBox(
-          width: 64,
-          height: 128,
-          child: Text(
-            "${index + 1}",
-            style: TextStyle(fontSize: selected ? 128 : 64),
-          ),
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return const SizedBox(width: 32);
-      },
+    return Card(
+      elevation: null,
+      child: ListView.separated(
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemCount: targetBeat,
+        itemBuilder: (BuildContext context, int index) {
+          final bool selected = beatCount == index + 1;
+          return SizedBox(
+            width: 64,
+            height: 128,
+            child: Text(
+              "${index + 1}",
+              style: TextStyle(fontSize: selected ? 128 : 64),
+            ),
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return const SizedBox(width: 32);
+        },
+      ),
     );
   }
 }
@@ -144,6 +153,64 @@ class _BpmConfiguration extends StatelessWidget {
             value: bpm / maximumBpm,
             min: minimumBpm / maximumBpm,
             onChanged: (value) => onBpmChanged((value * maximumBpm).toInt()),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _BeatConfiguration extends StatelessWidget {
+  final int beat;
+  final int maximumBeat;
+  final int minimumBeat;
+  final void Function(int) onBeatChanged;
+
+  const _BeatConfiguration({
+    super.key,
+    required this.beat,
+    required this.maximumBeat,
+    required this.minimumBeat,
+    required this.onBeatChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "$beat Beat",
+                style: const TextStyle(
+                  fontSize: 32,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  onBeatChanged(beat - 1);
+                },
+                icon: const Icon(Icons.arrow_downward_rounded),
+              ),
+              IconButton(
+                onPressed: () {
+                  onBeatChanged(beat + 1);
+                },
+                icon: const Icon(Icons.arrow_upward_rounded),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Slider(
+            value: beat / maximumBeat,
+            divisions: maximumBeat,
+            onChanged: (value) => onBeatChanged((value * maximumBeat).toInt()),
           ),
         ),
       ],
