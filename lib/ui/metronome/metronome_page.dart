@@ -41,23 +41,31 @@ class _MetronomePageState extends State<MetronomePage> {
       body: SafeArea(
         child: Column(
           children: [
-            IntrinsicHeight(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: _BpmCounter(
-                targetBeat: widget.selectedBeat,
+                beat: widget.selectedBeat,
                 beatCount: widget.beatCount,
+                bpm: widget.selectedBpm,
               ),
             ),
-            _BeatConfiguration(
-              beat: widget.selectedBeat,
-              maximumBeat: widget.maximumBeat,
-              minimumBeat: widget.minimumBeat,
-              onBeatChanged: (value) => widget.onChangeSelectedBeat(value),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: _BeatConfiguration(
+                beat: widget.selectedBeat,
+                maximumBeat: widget.maximumBeat,
+                minimumBeat: widget.minimumBeat,
+                onBeatChanged: (value) => widget.onChangeSelectedBeat(value),
+              ),
             ),
-            _BpmConfiguration(
-              bpm: widget.selectedBpm,
-              minimumBpm: widget.minimumBpm,
-              maximumBpm: widget.maximumBpm,
-              onBpmChanged: (value) => widget.onChangeSelectedBpm(value),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: _BpmConfiguration(
+                bpm: widget.selectedBpm,
+                minimumBpm: widget.minimumBpm,
+                maximumBpm: widget.maximumBpm,
+                onBpmChanged: (value) => widget.onChangeSelectedBpm(value),
+              ),
             ),
             Expanded(child: Container()),
           ],
@@ -68,128 +76,134 @@ class _MetronomePageState extends State<MetronomePage> {
 }
 
 class _BpmCounter extends StatelessWidget {
-  final int targetBeat;
+  final int beat;
   final int? beatCount;
+  final int bpm;
 
   const _BpmCounter({
-    required this.targetBeat,
+    required this.beat,
     required this.beatCount,
+    required this.bpm,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: null,
-      child: targetBeat <= 4
-          ? SizedBox(
-              height: 160,
-              child: Row(
-                children: [
-                  const Spacer(),
-                  ListView.separated(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: targetBeat,
-                    itemBuilder: (BuildContext context, int index) {
-                      final bool selected = beatCount == index + 1;
-                      return Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Text(
-                          "${index + 1}",
-                          style: TextStyle(fontSize: selected ? 128 : 64),
+    final bool shouldShowConciseLayout = beat <= 4;
+
+    return IntrinsicHeight(
+      child: Card(
+        elevation: 0.0,
+        color: Theme.of(context).colorScheme.primaryContainer,
+        child: SizedBox(
+          height: 120,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
+            child: Row(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: shouldShowConciseLayout ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "$bpm",
+                          style: const TextStyle(
+                            fontSize: 32,
+                            color: Colors.black,
+                          ),
                           textScaler: TextScaler.noScaling,
                         ),
-                      );
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return const SizedBox(width: 32);
-                    },
-                  ),
-                ],
-              ),
-            )
-          : SizedBox(
-              height: 160,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    "${beatCount ?? 0}",
-                    style: const TextStyle(fontSize: 128),
-                    textScaler: TextScaler.noScaling,
-                  ),
-                  const Text(
-                    "/",
-                    style: TextStyle(fontSize: 64),
-                    textScaler: TextScaler.noScaling,
-                  ),
-                  Text(
-                    "$targetBeat",
-                    style: const TextStyle(fontSize: 64),
-                    textScaler: TextScaler.noScaling,
-                  ),
-                ],
-              ),
-            ),
-    );
-  }
-}
-
-class _BpmConfiguration extends StatelessWidget {
-  final int bpm;
-  final int minimumBpm;
-  final int maximumBpm;
-  final void Function(int) onBpmChanged;
-
-  const _BpmConfiguration({
-    required this.bpm,
-    required this.minimumBpm,
-    required this.maximumBpm,
-    required this.onBpmChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "$bpm BPM",
-                style: const TextStyle(
-                  fontSize: 32,
+                        const Text(
+                          " BPM",
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (shouldShowConciseLayout)
+                      Text(
+                        "${beatCount ?? 0}/$beat",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                        ),
+                        textScaler: TextScaler.noScaling,
+                      ),
+                  ],
                 ),
-              ),
-              IconButton(
-                onPressed: () {
-                  onBpmChanged(bpm - 1);
-                },
-                icon: const Icon(Icons.arrow_downward_rounded),
-              ),
-              IconButton(
-                onPressed: () {
-                  onBpmChanged(bpm + 1);
-                },
-                icon: const Icon(Icons.arrow_upward_rounded),
-              ),
-            ],
+                const Spacer(),
+                shouldShowConciseLayout
+                    ? ListView.separated(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: beat,
+                        itemBuilder: (BuildContext context, int index) {
+                          final bool selected = beatCount == index + 1;
+                          return Align(
+                            alignment: Alignment.bottomCenter,
+                            child: SizedBox(
+                              width: 48,
+                              height: 100,
+                              child: Align(
+                                alignment: Alignment.bottomRight,
+                                child: Text(
+                                  "${index + 1}",
+                                  style: TextStyle(
+                                    fontSize: selected ? 80 : 40,
+                                    color:
+                                        selected ? Colors.black : Colors.grey,
+                                  ),
+                                  textScaler: TextScaler.noScaling,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const SizedBox(width: 20);
+                        },
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            "${beatCount ?? 0}",
+                            style: const TextStyle(
+                              fontSize: 80,
+                              color: Colors.black,
+                            ),
+                            textScaler: TextScaler.noScaling,
+                          ),
+                          const Text(
+                            "/",
+                            style: TextStyle(
+                              fontSize: 40,
+                              color: Colors.grey,
+                            ),
+                            textScaler: TextScaler.noScaling,
+                          ),
+                          Text(
+                            "$beat",
+                            style: const TextStyle(
+                              fontSize: 40,
+                              color: Colors.grey,
+                            ),
+                            textScaler: TextScaler.noScaling,
+                          ),
+                        ],
+                      ),
+              ],
+            ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Slider(
-            value: bpm / maximumBpm,
-            min: minimumBpm / maximumBpm,
-            onChanged: (value) => onBpmChanged((value * maximumBpm).toInt()),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
@@ -210,44 +224,136 @@ class _BeatConfiguration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "$beat Beat",
-                style: const TextStyle(
-                  fontSize: 32,
-                ),
+    return IntrinsicHeight(
+      child: Card(
+        elevation: 0.0,
+        color: Theme.of(context).colorScheme.tertiaryContainer,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
               ),
-              IconButton(
-                onPressed: () {
-                  onBeatChanged(beat - 1);
-                },
-                icon: const Icon(Icons.arrow_downward_rounded),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "$beat",
+                    style: const TextStyle(
+                      fontSize: 40,
+                    ),
+                  ),
+                  const Text(
+                    " Beat",
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      onBeatChanged(beat - 1);
+                    },
+                    icon: const Icon(Icons.arrow_downward_rounded),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      onBeatChanged(beat + 1);
+                    },
+                    icon: const Icon(Icons.arrow_upward_rounded),
+                  ),
+                ],
               ),
-              IconButton(
-                onPressed: () {
-                  onBeatChanged(beat + 1);
-                },
-                icon: const Icon(Icons.arrow_upward_rounded),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Slider(
+                value: beat / maximumBeat,
+                min: minimumBeat / maximumBeat,
+                divisions: maximumBeat,
+                onChanged: (value) =>
+                    onBeatChanged((value * maximumBeat).toInt()),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Slider(
-            value: beat / maximumBeat,
-            divisions: maximumBeat,
-            onChanged: (value) => onBeatChanged((value * maximumBeat).toInt()),
-          ),
+      ),
+    );
+  }
+}
+
+class _BpmConfiguration extends StatelessWidget {
+  final int bpm;
+  final int minimumBpm;
+  final int maximumBpm;
+  final void Function(int) onBpmChanged;
+
+  const _BpmConfiguration({
+    required this.bpm,
+    required this.minimumBpm,
+    required this.maximumBpm,
+    required this.onBpmChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
+      child: Card(
+        elevation: 0.0,
+        color: Theme.of(context).colorScheme.tertiaryContainer,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "$bpm",
+                    style: const TextStyle(
+                      fontSize: 40,
+                    ),
+                  ),
+                  const Text(
+                    " BPM",
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      onBpmChanged(bpm - 1);
+                    },
+                    icon: const Icon(Icons.arrow_downward_rounded),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      onBpmChanged(bpm + 1);
+                    },
+                    icon: const Icon(Icons.arrow_upward_rounded),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Slider(
+                value: bpm / maximumBpm,
+                min: minimumBpm / maximumBpm,
+                onChanged: (value) =>
+                    onBpmChanged((value * maximumBpm).toInt()),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
