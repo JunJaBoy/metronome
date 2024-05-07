@@ -80,25 +80,43 @@ class _BpmCounter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: null,
-      child: ListView.separated(
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        itemCount: targetBeat,
-        itemBuilder: (BuildContext context, int index) {
-          final bool selected = beatCount == index + 1;
-          return SizedBox(
-            width: 64,
-            height: 128,
-            child: Text(
-              "${index + 1}",
-              style: TextStyle(fontSize: selected ? 128 : 64),
+      child: targetBeat <= 4
+          ? ListView.separated(
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              itemCount: targetBeat,
+              itemBuilder: (BuildContext context, int index) {
+                final bool selected = beatCount == index + 1;
+                return SizedBox(
+                  width: 64,
+                  height: 128,
+                  child: Text(
+                    "${index + 1}",
+                    style: TextStyle(fontSize: selected ? 128 : 64),
+                  ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return const SizedBox(width: 32);
+              },
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  "${beatCount ?? 0}",
+                  style: const TextStyle(fontSize: 128),
+                ),
+                const Text(
+                  "/",
+                  style: TextStyle(fontSize: 64),
+                ),
+                Text(
+                  "$targetBeat",
+                  style: const TextStyle(fontSize: 64),
+                ),
+              ],
             ),
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) {
-          return const SizedBox(width: 32);
-        },
-      ),
     );
   }
 }

@@ -65,6 +65,10 @@ class Metronome {
         if (_beatInternal == 2) {
           resume();
         }
+        if (_beatInternal > properties.beat) {
+          pause();
+          resume();
+        }
       },
     );
     _isPlaying = true;
