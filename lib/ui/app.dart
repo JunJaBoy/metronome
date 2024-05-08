@@ -19,7 +19,7 @@ class _MetronomeAppState extends State<MetronomeApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return  MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => MetronomeBloc()),
       ],
