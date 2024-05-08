@@ -32,6 +32,22 @@ class _MetronomeAppState extends State<MetronomeApp> {
             useMaterial3: true,
           ),
           home: Scaffold(
+            bottomNavigationBar: NavigationBar(
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.music_note_rounded),
+                  label: "Metronome",
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.search_rounded),
+                  label: "Search BPM",
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.library_books_outlined),
+                  label: "Library",
+                ),
+              ],
+            ),
             floatingActionButton: FloatingActionButton.large(
               onPressed: () {
                 setState(
