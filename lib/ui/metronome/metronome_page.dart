@@ -242,7 +242,7 @@ class _BeatConfiguration extends StatelessWidget {
     return IntrinsicHeight(
       child: Card(
         elevation: 0.0,
-        color: Theme.of(context).colorScheme.tertiaryContainer,
+        color: Theme.of(context).colorScheme.surfaceVariant,
         child: Column(
           children: [
             Padding(
@@ -286,15 +286,12 @@ class _BeatConfiguration extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Slider(
-                value: beat / maximumBeat,
-                min: minimumBeat / maximumBeat,
-                divisions: maximumBeat,
-                onChanged: (value) =>
-                    onBeatChanged((value * maximumBeat).toInt()),
-              ),
+            Slider(
+              value: beat / maximumBeat,
+              min: minimumBeat / maximumBeat,
+              divisions: maximumBeat,
+              onChanged: (value) =>
+                  onBeatChanged((value * maximumBeat).toInt()),
             ),
           ],
         ),
@@ -321,7 +318,7 @@ class _BpmConfiguration extends StatelessWidget {
     return IntrinsicHeight(
       child: Card(
         elevation: 0.0,
-        color: Theme.of(context).colorScheme.tertiaryContainer,
+        color: Theme.of(context).colorScheme.surfaceVariant,
         child: Column(
           children: [
             Padding(
@@ -365,14 +362,10 @@ class _BpmConfiguration extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Slider(
-                value: bpm / maximumBpm,
-                min: minimumBpm / maximumBpm,
-                onChanged: (value) =>
-                    onBpmChanged((value * maximumBpm).toInt()),
-              ),
+            Slider(
+              value: bpm / maximumBpm,
+              min: minimumBpm / maximumBpm,
+              onChanged: (value) => onBpmChanged((value * maximumBpm).toInt()),
             ),
           ],
         ),
