@@ -20,116 +20,114 @@ class _MetronomeAppState extends State<MetronomeApp> {
       _MetronomeAppDestination.metronome;
 
   @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => MetronomeBloc()),
-      ],
-      child: BlocBuilder<MetronomeBloc, Metronome>(
-        bloc: metronomeBloc,
-        builder: (context, metronome) => MaterialApp(
-          title: 'Metronome',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-            useMaterial3: true,
-          ),
-          home: Scaffold(
-            bottomNavigationBar: NavigationBar(
-              selectedIndex: _currentDestination.index,
-              onDestinationSelected: (index) {
-                setState(
-                  () {
-                    _currentDestination = index.destination;
-                  },
-                );
-              },
-              destinations: const [
-                NavigationDestination(
-                  icon: Icon(Icons.music_note_outlined),
-                  label: "Metronome",
-                  selectedIcon: Icon(Icons.music_note_rounded),
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.search_outlined),
-                  label: "Search BPM",
-                  selectedIcon: Icon(Icons.search_rounded),
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.library_books_outlined),
-                  label: "Library",
-                  selectedIcon: Icon(Icons.library_books_rounded),
-                ),
-              ],
+  Widget build(BuildContext context) => MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => MetronomeBloc()),
+        ],
+        child: BlocBuilder<MetronomeBloc, Metronome>(
+          bloc: metronomeBloc,
+          builder: (context, metronome) => MaterialApp(
+            title: 'Metronome',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+              useMaterial3: true,
             ),
-            floatingActionButton: FloatingActionButton.large(
-              onPressed: () {
-                setState(
-                  () {
-                    metronomeBloc.add(
-                      metronome.isPlaying
-                          ? PauseMetronome()
-                          : ResumeMetronome(),
-                    );
-                  },
-                );
-              },
-              child: Icon(
-                metronome.isPlaying
-                    ? Icons.stop_rounded
-                    : Icons.play_arrow_rounded,
-              ),
-            ),
-            body: StreamBuilder(
-              stream: metronome.beatStream,
-              builder: (context, beat) {
-                if (beat.data != null) {
-                  AudioPlayer().play(
-                    AssetSource(
-                      beat.data == Metronome.minimumBeat
-                          ? 'audio_metronome_bell.mp3'
-                          : 'audio_metronome_click.mp3',
-                    ),
-                    mode: PlayerMode.lowLatency,
+            home: Scaffold(
+              bottomNavigationBar: NavigationBar(
+                selectedIndex: _currentDestination.index,
+                onDestinationSelected: (index) {
+                  setState(
+                    () {
+                      _currentDestination = index.destination;
+                    },
                   );
-                }
-                if (beat.data != _recent && beat.data != null) {
-                  _recent = beat.data!;
-                }
-                switch (_currentDestination) {
-                  case _MetronomeAppDestination.metronome:
-                    return MetronomePage(
-                      beatCount: beat.data,
-                      selectedBpm: metronome.properties.bpm,
-                      selectedBeat: metronome.properties.beat,
-                      onChangeSelectedBpm: (value) {
-                        setState(
-                          () {
-                            metronomeBloc.add(ChangeMetronomeBpm(value));
-                          },
-                        );
-                      },
-                      onChangeSelectedBeat: (value) {
-                        setState(
-                          () {
-                            metronomeBloc.add(ChangeMetronomeBeat(value));
-                          },
-                        );
-                      },
+                },
+                destinations: const [
+                  NavigationDestination(
+                    icon: Icon(Icons.music_note_outlined),
+                    label: "Metronome",
+                    selectedIcon: Icon(Icons.music_note_rounded),
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.search_outlined),
+                    label: "Search BPM",
+                    selectedIcon: Icon(Icons.search_rounded),
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.library_books_outlined),
+                    label: "Library",
+                    selectedIcon: Icon(Icons.library_books_rounded),
+                  ),
+                ],
+              ),
+              floatingActionButton: FloatingActionButton.large(
+                onPressed: () {
+                  setState(
+                    () {
+                      metronomeBloc.add(
+                        metronome.isPlaying
+                            ? PauseMetronome()
+                            : ResumeMetronome(),
+                      );
+                    },
+                  );
+                },
+                child: Icon(
+                  metronome.isPlaying
+                      ? Icons.stop_rounded
+                      : Icons.play_arrow_rounded,
+                ),
+              ),
+              body: StreamBuilder(
+                stream: metronome.beatStream,
+                builder: (context, beat) {
+                  if (beat.data != null) {
+                    AudioPlayer().play(
+                      AssetSource(
+                        beat.data == Metronome.minimumBeat
+                            ? 'audio_metronome_bell.mp3'
+                            : 'audio_metronome_click.mp3',
+                      ),
+                      mode: PlayerMode.lowLatency,
                     );
-                  case _MetronomeAppDestination.searchBpm:
-                  // TODO: Handle this case.
-                  case _MetronomeAppDestination.library:
-                  // TODO: Handle this case.
-                  default:
-                }
-                return const Center();
-              },
+                  }
+                  if (beat.data != _recent && beat.data != null) {
+                    _recent = beat.data!;
+                  }
+                  switch (_currentDestination) {
+                    case _MetronomeAppDestination.metronome:
+                      return MetronomePage(
+                        beatCount: beat.data,
+                        selectedBpm: metronome.properties.bpm,
+                        selectedBeat: metronome.properties.beat,
+                        onChangeSelectedBpm: (value) {
+                          setState(
+                            () {
+                              metronomeBloc.add(ChangeMetronomeBpm(value));
+                            },
+                          );
+                        },
+                        onChangeSelectedBeat: (value) {
+                          setState(
+                            () {
+                              metronomeBloc.add(ChangeMetronomeBeat(value));
+                            },
+                          );
+                        },
+                      );
+                    case _MetronomeAppDestination.searchBpm:
+                    // TODO: Handle this case.
+                    case _MetronomeAppDestination.library:
+                    // TODO: Handle this case.
+                    default:
+                  }
+                  return const Center();
+                },
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }
 
 enum _MetronomeAppDestination {

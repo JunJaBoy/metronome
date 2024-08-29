@@ -289,7 +289,7 @@ class _BeatConfiguration extends StatelessWidget {
             Slider(
               value: beat / maximumBeat,
               min: minimumBeat / maximumBeat,
-              divisions: maximumBeat,
+              divisions: maximumBeat - 1,
               onChanged: (value) =>
                   onBeatChanged((value * maximumBeat).toInt()),
             ),
